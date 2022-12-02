@@ -29,8 +29,8 @@ class GardenPlantingRepository @Inject constructor(
         gardenPlantingDao.insertGardenPlanting(gardenPlanting)
     }
 
-    suspend fun removeGardenPlanting(gardenPlanting: GardenPlanting) {
-        gardenPlantingDao.deleteGardenPlanting(gardenPlanting)
+    suspend fun removeGardenPlanting(plantId: String) {
+        gardenPlantingDao.deleteGardenPlanting(plantId)
     }
 
     fun isPlanted(plantId: String) =

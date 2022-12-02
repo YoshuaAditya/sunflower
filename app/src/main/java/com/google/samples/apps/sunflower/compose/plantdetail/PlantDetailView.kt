@@ -54,6 +54,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -126,10 +127,11 @@ fun PlantDetailsScreen(
     val isPlanted = plantDetailsViewModel.isPlanted.observeAsState().value
     val showSnackbar = plantDetailsViewModel.showSnackbar.observeAsState().value
 
-    if (plant != null && isPlanted != null && showSnackbar != null) {
+    if (plant != null && showSnackbar != null) {
         Surface {
+            val text= if(isPlanted!!) stringResource(R.string.added_plant_to_garden) else "Deleted"
             TextSnackbarContainer(
-                snackbarText = stringResource(R.string.added_plant_to_garden),
+                snackbarText = text,
                 showSnackbar = showSnackbar,
                 onDismissSnackbar = { plantDetailsViewModel.dismissSnackbar() }
             ) {
@@ -139,7 +141,10 @@ fun PlantDetailsScreen(
                     PlantDetailsCallbacks(
                         onBackClick = onBackClick,
                         onFabClick = {
-                            plantDetailsViewModel.addPlantToGarden()
+                            if(isPlanted)
+                                plantDetailsViewModel.deletePlantFromGarden()
+                            else
+                                plantDetailsViewModel.addPlantToGarden()
                         },
                         onShareClick = onShareClick
                     )
@@ -270,6 +275,21 @@ private fun PlantDetailsContent(
                         .alpha(contentAlpha())
                 )
             }
+            else{
+                val fabEndMargin = Dimens.PaddingSmall
+                PlantFabDelete(
+                    onFabClick = onFabClick,
+                    modifier = Modifier
+                        .constrainAs(fab) {
+                            centerAround(image.bottom)
+                            absoluteRight.linkTo(
+                                parent.absoluteRight,
+                                margin = fabEndMargin
+                            )
+                        }
+                        .alpha(contentAlpha())
+                )
+            }
 
             PlantInformation(
                 name = plant.name,
@@ -356,6 +376,27 @@ private fun PlantFab(
     ) {
         Icon(
             Icons.Filled.Add,
+            contentDescription = null
+        )
+    }
+}
+
+@Composable
+private fun PlantFabDelete(
+    onFabClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val deletePlantContentDescription = stringResource(R.string.delete_plant)
+    FloatingActionButton(
+        onClick = onFabClick,
+        shape = MaterialTheme.shapes.small,
+        // Semantics in parent due to https://issuetracker.google.com/184825850
+        modifier = modifier.semantics {
+            contentDescription = deletePlantContentDescription
+        }
+    ) {
+        Icon(
+            Icons.Filled.Delete,
             contentDescription = null
         )
     }

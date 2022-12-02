@@ -1,0 +1,6 @@
+GardenActivity:navHost(startDestination to HomeVpFragment)
+-HomeVPFragment:ViewPager2(From adapter creates 2 fragments below)
+--Tab1:GardenFragment(If list empty, there is a Add Plant button with onClick to PlantListFragment
+                      Each item onCLick navigate into PlantDetailFragment)
+--Tab2:PlantListFragment(right top icon is filter_zone, it will return filtered plants to the list)
+---PlantDetailFragment(uses compose to setContent, calling PlantDetailsScreen/View
